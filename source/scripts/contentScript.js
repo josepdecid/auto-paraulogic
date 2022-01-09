@@ -5,6 +5,14 @@ const HEX_SELECTOR = (idx) => `#hex-grid > li:nth-child(${idx}) > div > a > p`;
 const DICT_URL =
   'https://raw.githubusercontent.com/josepdecid/auto-paraulogic/main/catala.txt';
 
+function sleep(milliseconds) {
+  const date = Date.now();
+  let currentDate = null;
+  do {
+    currentDate = Date.now();
+  } while (currentDate - date < milliseconds);
+}
+
 function isSuperset(set, subset) {
   for (const elem of subset) {
     if (!set.has(elem)) {
@@ -52,7 +60,6 @@ const findAndInsertWords = (dictionary) => {
   const submitButton = document.querySelector(SUBMIT_SELECTOR);
   const options = new Set(rawOptions);
 
-  const idx = 0;
   for (const word of dictionary) {
     if (
       word.length >= 3 &&
@@ -62,11 +69,14 @@ const findAndInsertWords = (dictionary) => {
       for (const c of word) {
         const element = char2Element[c];
         element.click();
+        sleep(1000);
       }
 
       submitButton.click();
     }
   }
+
+  console.log('END!');
 };
 
 browser.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
