@@ -3,9 +3,11 @@ import browser from 'webextension-polyfill';
 
 import '../styles/popup.scss';
 
-function openWebPage(url) {
-  return browser.tabs.create({url});
-}
+/* function openWebPage(url) {
+  return browser.tabs.create({
+    url,
+  });
+} */
 
 document.addEventListener('DOMContentLoaded', async () => {
   const tabs = await browser.tabs.query({
@@ -13,26 +15,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     lastFocusedWindow: true,
   });
 
-  const url = tabs.length && tabs[0].url;
+  const tab = tabs.length && tabs[0];
 
-  const response = await browser.runtime.sendMessage({
-    msg: 'hello',
-    url,
+  // When clicking the insert words button, run the process to find candidate words.
+  const insertWordsButton = document.getElementById('insert-words-btn');
+  insertWordsButton.addEventListener('click', async () => {
+    await browser.tabs.sendMessage(tab.id, 'InsertWords');
   });
 
-  console.emoji('🦄', response);
-
-  document.getElementById('github__button').addEventListener('click', () => {
-    return openWebPage(
-      'https://github.com/abhijithvijayan/web-extension-starter'
-    );
-  });
-
-  document.getElementById('donate__button').addEventListener('click', () => {
-    return openWebPage('https://www.buymeacoffee.com/abhijithvijayan');
-  });
-
-  document.getElementById('options__button').addEventListener('click', () => {
-    return openWebPage('options.html');
-  });
+  /* document.getElementById('github__button').addEventListener('click', () => {
+  return openWebPage('https://github.com/josepdecid/auto-paraulogic');
+}); */
 });
