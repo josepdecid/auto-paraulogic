@@ -1,9 +1,8 @@
 import browser from 'webextension-polyfill';
+import catalanDictionary from '../assets/catala.json';
 
 const SUBMIT_SELECTOR = '#submit-button';
 const HEX_SELECTOR = (idx) => `#hex-grid > li:nth-child(${idx}) > div > a > p`;
-const DICT_URL =
-  'https://raw.githubusercontent.com/josepdecid/auto-paraulogic/main/catala.txt';
 
 function sleep(milliseconds) {
   const date = Date.now();
@@ -22,27 +21,7 @@ function isSuperset(set, subset) {
   return true;
 }
 
-const readDictionary = async () => {
-  const response = await fetch(DICT_URL);
-
-  const reader = response.body.getReader();
-  const rawValues = (await reader.read()).value;
-
-  const dictionary = [];
-  let currentWord = '';
-
-  for (let i = 0; i < rawValues.length; i += 1) {
-    const c = String.fromCharCode(rawValues[i]);
-    if (c === '\n') {
-      dictionary.push(currentWord);
-      currentWord = '';
-    } else currentWord += c;
-  }
-
-  return dictionary;
-};
-
-const findAndInsertWords = (dictionary) => {
+const findAndInsertWords = () => {
   let required;
   const rawOptions = [];
   const char2Element = {};
@@ -60,16 +39,18 @@ const findAndInsertWords = (dictionary) => {
   const submitButton = document.querySelector(SUBMIT_SELECTOR);
   const options = new Set(rawOptions);
 
-  for (const word of dictionary) {
+  for (const word of catalanDictionary) {
     if (
       word.length >= 3 &&
       word.includes(required) &&
       isSuperset(options, new Set(word))
     ) {
+      console.log(word);
+
       for (const c of word) {
         const element = char2Element[c];
         element.click();
-        sleep(1000);
+        sleep(10);
       }
 
       submitButton.click();
@@ -79,10 +60,9 @@ const findAndInsertWords = (dictionary) => {
   console.log('END!');
 };
 
-browser.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
+browser.runtime.onMessage.addListener((request) => {
   if (request === 'InsertWords') {
-    const dictionary = await readDictionary();
-    await findAndInsertWords(dictionary);
+    findAndInsertWords();
   }
 
   return Promise.resolve('got your message, thanks!');
