@@ -1,1 +1,1 @@
-# auto-paraulogic
+# Auto-Paraulògic

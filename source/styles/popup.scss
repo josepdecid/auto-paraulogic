@@ -1,0 +1,46 @@
+@import 'base/fonts';
+@import 'base/reset';
+@import 'base/variables';
+
+body {
+  color: $black;
+  background-color: $greyWhite;
+}
+
+#popup {
+  min-width: 350px;
+  padding: 30px 20px;
+
+  img {
+    filter: none;
+  }
+
+  h2 {
+    font-size: 25px;
+    text-align: center;
+  }
+
+  #insert-words-btn {
+    width: 50%;
+    background: green;
+    color: white;
+    font-weight: 500;
+    border-radius: 15px;
+    padding: 5px 10px;
+    justify-content: center;
+    margin: 20px auto;
+    cursor: pointer;
+    opacity: 0.8;
+    display: flex;
+  }
+
+  .link-icon {
+    width: 2em;
+    height: 2em;
+    cursor: pointer;
+  }
+
+  .hidden {
+    visibility: hidden;
+  }
+}
