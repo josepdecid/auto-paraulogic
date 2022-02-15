@@ -1,16 +1,9 @@
 import browser from 'webextension-polyfill';
 import catalanDictionary from '../assets/catala.json';
 
-const SUBMIT_SELECTOR = '#submit-button';
+const SUBMIT_ID = 'submit-button';
+const INPUT_ID = 'test-word';
 const HEX_SELECTOR = (idx) => `#hex-grid > li:nth-child(${idx}) > div > a > p`;
-
-function sleep(milliseconds) {
-  const date = Date.now();
-  let currentDate = null;
-  do {
-    currentDate = Date.now();
-  } while (currentDate - date < milliseconds);
-}
 
 function isSuperset(set, subset) {
   for (const elem of subset) {
@@ -24,7 +17,6 @@ function isSuperset(set, subset) {
 const findAndInsertWords = () => {
   let required;
   const rawOptions = [];
-  const char2Element = {};
 
   for (let i = 1; i < 8; i += 1) {
     const element = document.querySelector(HEX_SELECTOR(i));
@@ -33,31 +25,21 @@ const findAndInsertWords = () => {
     if (i === 4) required = option;
 
     rawOptions.push(option);
-    char2Element[option] = element;
   }
 
-  const submitButton = document.querySelector(SUBMIT_SELECTOR);
+  const inputElement = document.getElementById(INPUT_ID);
+  const submitButton = document.getElementById(SUBMIT_ID);
   const options = new Set(rawOptions);
 
   for (const word of catalanDictionary) {
-    if (
-      word.length >= 3 &&
-      word.includes(required) &&
-      isSuperset(options, new Set(word))
-    ) {
+    if (word.includes(required) && isSuperset(options, new Set(word))) {
       console.log(word);
-
-      for (const c of word) {
-        const element = char2Element[c];
-        element.click();
-        sleep(10);
-      }
-
+      inputElement.textContent = word.toLowerCase();
       submitButton.click();
     }
   }
 
-  console.log('END!');
+  console.log('Nice tutorial');
 };
 
 browser.runtime.onMessage.addListener((request) => {
